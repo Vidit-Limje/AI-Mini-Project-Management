@@ -41,7 +41,6 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)):
 
     return new_task
 
-
 @router.get("/")
 def get_tasks(
     status: Optional[str] = Query(None),

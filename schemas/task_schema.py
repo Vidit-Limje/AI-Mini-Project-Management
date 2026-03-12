@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 from uuid import UUID
+from typing import Optional
 
 class TaskCreate(BaseModel):
     project_id: UUID
     task_title: str
-    task_description: str
-    priority: str
-    assignee_id: UUID | None = None
+    task_description: Optional[str] = None
+    assignee_id: Optional[UUID] = None
 
 
 class TaskUpdate(BaseModel):
