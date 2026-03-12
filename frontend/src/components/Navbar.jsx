@@ -1,15 +1,19 @@
 import { Link } from "react-router-dom";
 
-export default function Navbar(){
+export default function Navbar() {
 
- return(
-  <div className="navbar">
+  return (
+    <nav className="navbar">
 
-   <h2>AI Task Manager</h2>
+      <div className="logo">
+        AI Task Manager
+      </div>
 
-   <Link to="/">Dashboard</Link>
+      <div className="nav-links">
+        <Link to="/">Dashboard</Link>
+      </div>
 
-  </div>
- )
+    </nav>
+  );
 
 }

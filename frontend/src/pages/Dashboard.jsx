@@ -6,6 +6,7 @@ import ProjectCard from "../components/ProjectCard";
 export default function Dashboard(){
 
  const [projects,setProjects]=useState([]);
+ const [search,setSearch]=useState("");
 
  const loadProjects = () =>{
   getProjects().then(setProjects);
@@ -15,15 +16,26 @@ export default function Dashboard(){
   loadProjects();
  },[]);
 
+ const filteredProjects = projects.filter(p =>
+   p.project_name.toLowerCase().includes(search.toLowerCase())
+ );
+
  return(
 
-  <div>
+  <div className="container">
 
    <CreateProject refresh={loadProjects}/>
 
    <h2>Projects</h2>
 
-   {projects.map(p=>(
+   <input
+    className="search-bar"
+    placeholder="Search project..."
+    value={search}
+    onChange={(e)=>setSearch(e.target.value)}
+   />
+
+   {filteredProjects.map(p=>(
     <ProjectCard key={p.project_id} project={p}/>
    ))}
 
