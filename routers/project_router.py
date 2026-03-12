@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
+from uuid import UUID
 from database.database import get_db
 from models.project import Project
 from schemas.project_schema import ProjectCreate
+from models.task import Task
 
 router = APIRouter(prefix="/projects", tags=["Projects"])
 
@@ -26,6 +27,13 @@ def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
 @router.get("/")
 def get_projects(db: Session = Depends(get_db)):
     return db.query(Project).all()
+
+@router.get("/{project_id}/tasks")
+def get_project_tasks(project_id: UUID, db: Session = Depends(get_db)):
+
+    tasks = db.query(Task).filter(Task.project_id == project_id).all()
+
+    return tasks
 
 
 @router.put("/{project_id}")
