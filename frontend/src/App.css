@@ -1,0 +1,19 @@
+.task-card {
+  border:1px solid #ddd;
+  padding:20px;
+  margin-bottom:10px;
+  border-radius:8px;
+}
+
+.priority.red {
+  background:red;
+  color:white;
+}
+
+.priority.orange {
+  background:orange;
+}
+
+.priority.green {
+  background:green;
+}
