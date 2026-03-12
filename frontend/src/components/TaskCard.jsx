@@ -9,15 +9,19 @@ export default function TaskCard({ task }) {
 
   return (
     <div className="task-card">
+
       <h3>{task.task_title}</h3>
 
       <p>{task.task_description}</p>
 
-      <p>Status: {task.status}</p>
+      <div className="status">
+        Status: {task.status}
+      </div>
 
       <span className={`priority ${color}`}>
         {task.priority}
       </span>
+
     </div>
   );
 }
