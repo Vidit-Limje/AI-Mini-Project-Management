@@ -1,32 +1,67 @@
-import { updateTask } from "../api/api";
+import { useEffect, useState } from "react";
+import { updateTask, getUsers } from "../api/api";
 
-export default function TaskCard({task,refresh}){
+export default function TaskCard({ task, refresh }) {
 
- const changeStatus = async(status)=>{
+  const [users, setUsers] = useState([]);
 
-  await updateTask(task.task_id,{
-   status:status
-  });
+  useEffect(() => {
+    getUsers().then(setUsers);
+  }, []);
 
-  refresh();
- };
+  const changeStatus = async (status) => {
+    await updateTask(task.task_id, { status: status });
+    refresh();
+  };
 
- return(
+  const assignUser = async (userId) => {
+    await updateTask(task.task_id, {
+      assignee_id: userId
+    });
 
-  <div className="task-card">
+    refresh();
+  };
 
-   <h4>{task.task_title}</h4>
+  const assignedUser = users.find(
+    u => u.user_id === task.assignee_id
+  );
 
-   <p>{task.task_description}</p>
+  return (
+    <div className="task-card">
 
-   <p>Priority: {task.priority}</p>
+      <h4>{task.task_title}</h4>
 
-   <button onClick={()=>changeStatus("TODO")}>TODO</button>
-   <button onClick={()=>changeStatus("IN_PROGRESS")}>IN PROGRESS</button>
-   <button onClick={()=>changeStatus("COMPLETED")}>DONE</button>
+      <p>{task.task_description}</p>
 
-  </div>
+      <p><b>Priority:</b> {task.priority}</p>
 
- )
+      {/* ASSIGNEE DISPLAY */}
+      <p>
+        <b>Assigned To:</b>{" "}
+        {assignedUser ? assignedUser.name : "Unassigned"}
+      </p>
 
+      {/* ASSIGN USER */}
+      {!task.assignee_id && (
+        <select onChange={(e) => assignUser(e.target.value)}>
+
+          <option value="">Assign User</option>
+
+          {users.map(user => (
+            <option key={user.user_id} value={user.user_id}>
+              {user.name}
+            </option>
+          ))}
+
+        </select>
+      )}
+
+      <div style={{ marginTop: "10px" }}>
+        <button onClick={() => changeStatus("TODO")}>TODO</button>
+        <button onClick={() => changeStatus("IN_PROGRESS")}>IN PROGRESS</button>
+        <button onClick={() => changeStatus("COMPLETED")}>DONE</button>
+      </div>
+
+    </div>
+  );
 }
