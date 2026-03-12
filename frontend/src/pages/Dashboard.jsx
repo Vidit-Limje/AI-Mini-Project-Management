@@ -1,31 +1,60 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import TaskCard from "../components/TaskCard";
-import { motion } from "framer-motion";
 
 export default function Dashboard() {
 
-  const [tasks, setTasks] = useState([]);
+  const [tasks,setTasks] = useState([]);
+  const [projects,setProjects] = useState([]);
+  const [selectedProject,setSelectedProject] = useState("");
 
-  useEffect(() => {
+  useEffect(()=>{
+
     API.get("/tasks").then(res => setTasks(res.data));
-  }, []);
+
+    API.get("/projects").then(res => setProjects(res.data));
+
+  },[]);
+
+  const filterTasks = async(projectId)=>{
+
+    setSelectedProject(projectId);
+
+    const res = await API.get(`/projects/${projectId}/tasks`);
+
+    setTasks(res.data);
+  }
 
   return (
 
     <div className="container">
 
-  <h1>🚀 AI Project Dashboard</h1>
+      <h1>🚀 AI Project Dashboard</h1>
 
-  <div className="board">
+      {/* Project Filter */}
 
-    {tasks.map(task => (
-      <TaskCard key={task.task_id} task={task} />
-    ))}
+      <select
+        onChange={(e)=>filterTasks(e.target.value)}
+      >
 
-  </div>
+        <option>Select Project</option>
 
-</div>
+        {projects.map(p => (
+          <option key={p.project_id} value={p.project_id}>
+            {p.project_name}
+          </option>
+        ))}
 
+      </select>
+
+      <div className="board">
+
+        {tasks.map(task => (
+          <TaskCard key={task.task_id} task={task} />
+        ))}
+
+      </div>
+
+    </div>
   );
 }

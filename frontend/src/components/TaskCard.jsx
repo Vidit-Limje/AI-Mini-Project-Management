@@ -1,4 +1,4 @@
-export default function TaskCard({ task }) {
+export default function TaskCard({task}) {
 
   const color =
     task.priority === "HIGH"
@@ -8,15 +8,16 @@ export default function TaskCard({ task }) {
       : "green";
 
   return (
+
     <div className="task-card">
 
       <h3>{task.task_title}</h3>
 
       <p>{task.task_description}</p>
 
-      <div className="status">
+      <p className="status">
         Status: {task.status}
-      </div>
+      </p>
 
       <span className={`priority ${color}`}>
         {task.priority}
