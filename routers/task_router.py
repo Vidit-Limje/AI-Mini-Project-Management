@@ -5,18 +5,34 @@ from uuid import UUID
 from database.database import get_db
 from models.task import Task
 from schemas.task_schema import TaskCreate, TaskUpdate
+from services.ai_service import generate_task_details
+from models.project import Project
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 @router.post("/")
 def create_task(task: TaskCreate, db: Session = Depends(get_db)):
 
+    project = db.query(Project).filter(
+        Project.project_id == task.project_id
+    ).first()
+
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    ai_result = generate_task_details(
+        project.project_name,
+        project.domain,
+        task.task_title
+    )
+
     new_task = Task(
         project_id=task.project_id,
         task_title=task.task_title,
-        task_description=task.task_description,
-        priority=task.priority,
-        assignee_id=task.assignee_id
+        task_description=ai_result["description"],
+        priority=ai_result["priority"],
+        assignee_id=task.assignee_id,
+        status="TODO"
     )
 
     db.add(new_task)
@@ -24,6 +40,7 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)):
     db.refresh(new_task)
 
     return new_task
+
 
 @router.get("/")
 def get_tasks(
