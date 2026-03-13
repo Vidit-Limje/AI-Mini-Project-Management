@@ -41,6 +41,6 @@ Return ONLY valid JSON like this:
         temperature=0.3
     )
 
-    result = response.choices[0].message.content
+    result = response.choices[0].message.content.strip()
 
     return json.loads(result)

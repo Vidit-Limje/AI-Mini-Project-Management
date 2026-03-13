@@ -1,15 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException,Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import Optional
-from uuid import UUID 
+from uuid import UUID
+
 from database.database import get_db
 from models.task import Task
+from models.project import Project
 from schemas.task_schema import TaskCreate, TaskUpdate
 from services.ai_service import generate_task_details
-from models.project import Project
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
+
+# CREATE TASK
 @router.post("/")
 def create_task(task: TaskCreate, db: Session = Depends(get_db)):
 
@@ -20,17 +23,26 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)):
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
 
-    ai_result = generate_task_details(
-        project.project_name,
-        project.domain,
-        task.task_title
-    )
+    # Default values
+    description = task.task_description
+    priority = task.priority or "MEDIUM"
+
+    # Use AI if requested
+    if task.use_ai:
+        ai_result = generate_task_details(
+            project.project_name,
+            project.domain,
+            task.task_title
+        )
+
+        description = ai_result["description"]
+        priority = ai_result["priority"]
 
     new_task = Task(
         project_id=task.project_id,
         task_title=task.task_title,
-        task_description=ai_result["description"],
-        priority=ai_result["priority"],
+        task_description=description,
+        priority=priority,
         assignee_id=task.assignee_id,
         status="TODO"
     )
@@ -41,6 +53,8 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)):
 
     return new_task
 
+
+# GET ALL TASKS
 @router.get("/")
 def get_tasks(
     status: Optional[str] = Query(None),
@@ -68,6 +82,8 @@ def get_tasks(
 
     return tasks
 
+
+# GET SINGLE TASK
 @router.get("/{task_id}")
 def get_task(task_id: str, db: Session = Depends(get_db)):
 
@@ -78,6 +94,8 @@ def get_task(task_id: str, db: Session = Depends(get_db)):
 
     return task
 
+
+# UPDATE TASK
 @router.put("/{task_id}")
 def update_task(task_id: str, task_update: TaskUpdate, db: Session = Depends(get_db)):
 
@@ -94,6 +112,8 @@ def update_task(task_id: str, task_update: TaskUpdate, db: Session = Depends(get
 
     return task
 
+
+# DELETE TASK
 @router.delete("/{task_id}")
 def delete_task(task_id: str, db: Session = Depends(get_db)):
 
