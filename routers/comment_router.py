@@ -1,15 +1,24 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from uuid import UUID
 
 from database.database import get_db
 from models.comment import Comment
-from schemas.comment_schema import CommentCreate
+from models.task import Task
+from schemas.comment_schema import CommentCreate, CommentResponse
 
 router = APIRouter(prefix="/comments", tags=["Comments"])
 
 
-@router.post("/")
+# CREATE COMMENT
+@router.post("/", response_model=CommentResponse)
 def create_comment(comment: CommentCreate, db: Session = Depends(get_db)):
+
+    # Verify task exists
+    task = db.query(Task).filter(Task.task_id == comment.task_id).first()
+
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
 
     new_comment = Comment(
         task_id=comment.task_id,
@@ -24,18 +33,29 @@ def create_comment(comment: CommentCreate, db: Session = Depends(get_db)):
     return new_comment
 
 
-@router.get("/task/{task_id}")
-def get_comments(task_id: int, db: Session = Depends(get_db)):
+# GET COMMENTS FOR A TASK
+@router.get("/task/{task_id}", response_model=list[CommentResponse])
+def get_comments(task_id: UUID, db: Session = Depends(get_db)):
 
-    return db.query(Comment).filter(Comment.task_id == task_id).all()
+    comments = db.query(Comment).filter(
+        Comment.task_id == task_id
+    ).order_by(Comment.comment_id.desc()).all()
+
+    return comments
 
 
+# DELETE COMMENT
 @router.delete("/{comment_id}")
-def delete_comment(comment_id: int, db: Session = Depends(get_db)):
+def delete_comment(comment_id: UUID, db: Session = Depends(get_db)):
 
-    comment = db.query(Comment).filter(Comment.comment_id == comment_id).first()
+    comment = db.query(Comment).filter(
+        Comment.comment_id == comment_id
+    ).first()
+
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
 
     db.delete(comment)
     db.commit()
 
-    return {"message": "Comment deleted"}
+    return {"message": "Comment deleted successfully"}

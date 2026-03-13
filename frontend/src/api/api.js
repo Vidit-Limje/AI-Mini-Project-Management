@@ -1,4 +1,4 @@
-const BASE = "http://127.0.0.1:8000";
+const BASE = "http://127.0.0.1:9000";
 
 export const getProjects = () =>
  fetch(`${BASE}/projects`).then(res => res.json());
@@ -34,3 +34,19 @@ export const updateTask = (taskId,data) =>
 
 export const getUsers = () =>
  fetch(`${BASE}/users`).then(res=>res.json());
+
+export const getComments = (taskId) =>
+ fetch(`${BASE}/comments/task/${taskId}`)
+ .then(res => res.json());
+
+export const createComment = (data) =>
+ fetch(`${BASE}/comments/`,{
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify(data)
+ }).then(res=>res.json());
+
+export const deleteComment = (id) =>
+ fetch(`${BASE}/comments/${id}`,{
+  method:"DELETE"
+ }).then(res=>res.json());
