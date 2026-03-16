@@ -1,0 +1,305 @@
+:root{
+  --bg:#f6f7f9;
+  --card:#ffffff;
+  --border:#e5e7eb;
+
+  --text:#1f2933;
+  --text-light:#6b7280;
+
+  --primary:#4f46e5;
+  --primary-hover:#4338ca;
+
+  --success:#10b981;
+  --warning:#f59e0b;
+  --danger:#ef4444;
+
+  --radius:10px;
+}
+
+/* RESET */
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+/* BODY */
+
+body{
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* LAYOUT */
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:30px;
+}
+
+/* NAVBAR */
+
+.navbar{
+  height:60px;
+  background:white;
+  border-bottom:1px solid var(--border);
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:0 40px;
+}
+
+.logo{
+  font-weight:600;
+  font-size:18px;
+}
+
+.nav-links a{
+  text-decoration:none;
+  color:var(--text-light);
+  margin-left:20px;
+  font-size:14px;
+}
+
+.nav-links a:hover{
+  color:var(--text);
+}
+
+/* CARDS */
+
+.project-card,
+.task-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-top:12px;
+
+  transition:all 0.2s ease;
+}
+
+.project-card:hover,
+.task-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.06);
+}
+
+/* PROJECT GRID */
+
+.projects-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:16px;
+  margin-top:20px;
+}
+
+/* BOARD */
+
+.board{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:20px;
+}
+
+.board-column{
+  background:#fafafa;
+  padding:15px;
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+
+  max-height:70vh;
+  overflow-y:auto;
+}
+
+.board-column h3{
+  margin-bottom:10px;
+  font-size:16px;
+}
+
+/* INPUTS */
+
+input,
+select{
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:white;
+  font-size:14px;
+
+  transition:0.2s;
+}
+
+input:focus,
+select:focus{
+  outline:none;
+  border-color:var(--primary);
+}
+
+/* BUTTONS */
+
+button{
+  padding:8px 14px;
+  border:none;
+  border-radius:8px;
+  background:var(--primary);
+  color:white;
+  cursor:pointer;
+
+  font-size:13px;
+  font-weight:500;
+
+  transition:all 0.2s ease;
+}
+
+button:hover{
+  background:var(--primary-hover);
+  transform:translateY(-1px);
+}
+
+button:active{
+  transform:scale(0.97);
+}
+
+/* STATUS BUTTONS */
+
+.status-buttons{
+  margin-top:10px;
+}
+
+.status-buttons button{
+  margin-right:6px;
+}
+
+/* SEARCH */
+
+.search-bar{
+  margin-top:10px;
+  padding:10px;
+  width:300px;
+  font-size:14px;
+}
+
+/* COMMENTS */
+
+.comments-section{
+  margin-top:16px;
+}
+
+.comments-header{
+  font-weight:600;
+  font-size:14px;
+  margin-bottom:8px;
+}
+
+.no-comments{
+  font-size:12px;
+  color:#6b7280;
+}
+
+.comment-row{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.comment-avatar{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:#e5e7eb;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:13px;
+  font-weight:600;
+}
+
+.comment-body{
+  flex:1;
+  background:#f9fafb;
+  padding:8px 10px;
+  border-radius:8px;
+}
+
+.comment-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.comment-name{
+  font-size:13px;
+  font-weight:600;
+}
+
+.comment-text{
+  font-size:13px;
+  margin-top:2px;
+}
+
+.comment-delete{
+  background:none;
+  border:none;
+  color:#9ca3af;
+  cursor:pointer;
+}
+
+.comment-delete:hover{
+  color:var(--danger);
+}
+
+.comment-input-box{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+  align-items:center;
+}
+
+.comment-input-box select{
+  flex:0 0 auto;
+}
+
+.comment-input-box input{
+  flex:1;
+  min-width:0;
+}
+
+.comment-input-box button{
+  flex:0 0 auto;
+}
+
+.task-summary{
+  cursor:pointer;
+}
+
+.task-title{
+  font-size:14px;
+  font-weight:600;
+}
+
+.task-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:6px;
+  font-size:12px;
+  color:var(--text-light);
+}
+
+.task-details{
+  margin-top:12px;
+}
+
+.task-description{
+  font-size:13px;
+  margin-bottom:10px;
+}

@@ -14,9 +14,10 @@ export default function TaskCard({ task, refresh }) {
   const [commentText, setCommentText] = useState("");
   const [commentUser, setCommentUser] = useState("");
 
+  const [expanded, setExpanded] = useState(false);
+
   useEffect(() => {
     loadUsers();
-    loadComments();
   }, []);
 
   const loadUsers = async () => {
@@ -29,13 +30,20 @@ export default function TaskCard({ task, refresh }) {
     setComments(data);
   };
 
-  // Change task status
+  const toggleExpand = () => {
+
+    if (!expanded) {
+      loadComments();
+    }
+
+    setExpanded(!expanded);
+  };
+
   const changeStatus = async (status) => {
     await updateTask(task.task_id, { status });
     refresh();
   };
 
-  // Assign user
   const assignUser = async (userId) => {
     if (!userId) return;
 
@@ -46,7 +54,6 @@ export default function TaskCard({ task, refresh }) {
     refresh();
   };
 
-  // Add comment
   const addComment = async () => {
 
     if (!commentUser) {
@@ -57,14 +64,15 @@ export default function TaskCard({ task, refresh }) {
     if (commentText.trim() === "") return;
 
     await createComment({
-  task_id: String(task.task_id),
-  user_id: String(commentUser),
-  comment_text: commentText
-});
+      task_id: String(task.task_id),
+      user_id: String(commentUser),
+      comment_text: commentText
+    });
 
     setCommentText("");
-setCommentUser("");
-loadComments();
+    setCommentUser("");
+
+    loadComments();
   };
 
   const assignedUser = users.find(
@@ -74,105 +82,169 @@ loadComments();
   return (
     <div className="task-card">
 
-      <h4>{task.task_title}</h4>
+      {/* COLLAPSED VIEW */}
 
-      <p>{task.task_description}</p>
+      <div className="task-summary" onClick={toggleExpand}>
 
-      <p>
-        <b>Priority:</b> {task.priority}
-      </p>
+        <h4 className="task-title">
+          {task.task_title}
+        </h4>
 
-      {/* ASSIGNED USER */}
-      <p>
-        <b>Assigned To:</b>{" "}
-        {assignedUser ? assignedUser.name : "Unassigned"}
-      </p>
+        <div className="task-meta">
 
-      {/* ASSIGN USER */}
-      {!task.assignee_id && (
-        <select onChange={(e) => assignUser(e.target.value)}>
-          <option value="">Assign User</option>
+          <span className="task-priority">
+            {task.priority}
+          </span>
 
-          {users.map((user) => (
-            <option key={user.user_id} value={user.user_id}>
-              {user.name}
-            </option>
-          ))}
-        </select>
-      )}
-
-      {/* STATUS BUTTONS */}
-      <div style={{ marginTop: "10px" }}>
-        <button onClick={() => changeStatus("TODO")}>TODO</button>
-        <button onClick={() => changeStatus("IN_PROGRESS")}>IN PROGRESS</button>
-        <button onClick={() => changeStatus("COMPLETED")}>DONE</button>
-      </div>
-
-      {/* COMMENTS */}
-      <div style={{ marginTop: "15px" }}>
-
-        <b>Comments</b>
-
-        {comments.length === 0 && (
-          <p style={{ fontSize: "12px" }}>No comments yet</p>
-        )}
-
-        {comments.map((c) => {
-
-          const commentUserObj = users.find(
-            u => u.user_id === c.user_id
-          );
-
-          return (
-            <div key={c.comment_id} style={{ marginTop: "6px" }}>
-
-              <b>{commentUserObj ? commentUserObj.name : "User"}:</b>{" "}
-              {c.comment_text}
-
-              <button
-                style={{ marginLeft: "10px" }}
-                onClick={() => deleteComment(c.comment_id).then(loadComments)}
-              >
-                x
-              </button>
-
-            </div>
-          );
-        })}
-
-        {/* ADD COMMENT */}
-        <div style={{ marginTop: "10px" }}>
-
-          <select
-            value={commentUser}
-            onChange={(e) => setCommentUser(e.target.value)}
-          >
-            <option value="">Select User</option>
-
-            {users.map((user) => (
-              <option key={user.user_id} value={user.user_id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-
-          <input
-            placeholder="Add comment..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            style={{ marginLeft: "5px" }}
-          />
-
-          <button
-            onClick={addComment}
-            style={{ marginLeft: "5px" }}
-          >
-            Add
-          </button>
+          <span className="task-assignee">
+            {assignedUser ? assignedUser.name : "Unassigned"}
+          </span>
 
         </div>
 
       </div>
+
+      {/* EXPANDED DETAILS */}
+
+      {expanded && (
+
+        <div className="task-details">
+
+          <p className="task-description">
+            {task.task_description}
+          </p>
+
+          {!task.assignee_id && (
+            <select onChange={(e) => assignUser(e.target.value)}>
+              <option value="">Assign User</option>
+
+              {users.map((user) => (
+                <option key={user.user_id} value={user.user_id}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {/* STATUS */}
+
+          <div className="status-buttons">
+
+  {task.status !== "TODO" && (
+    <button onClick={() => changeStatus("TODO")}>
+      TODO
+    </button>
+  )}
+
+  {task.status !== "IN_PROGRESS" && (
+    <button onClick={() => changeStatus("IN_PROGRESS")}>
+      IN PROGRESS
+    </button>
+  )}
+
+  {task.status !== "COMPLETED" && (
+    <button onClick={() => changeStatus("COMPLETED")}>
+      DONE
+    </button>
+  )}
+
+</div>
+
+          {/* COMMENTS */}
+
+          <div className="comments-section">
+
+            <div className="comments-header">
+              Comments
+            </div>
+
+            {comments.length === 0 && (
+              <p className="no-comments">No comments yet</p>
+            )}
+
+            {comments.map((c) => {
+
+              const commentUserObj = users.find(
+                u => u.user_id === c.user_id
+              );
+
+              const username = commentUserObj
+                ? commentUserObj.name
+                : "User";
+
+              const avatar = username.charAt(0).toUpperCase();
+
+              return (
+                <div key={c.comment_id} className="comment-row">
+
+                  <div className="comment-avatar">
+                    {avatar}
+                  </div>
+
+                  <div className="comment-body">
+
+                    <div className="comment-top">
+
+                      <span className="comment-name">
+                        {username}
+                      </span>
+
+                      <button
+                        className="comment-delete"
+                        onClick={() =>
+                          deleteComment(c.comment_id).then(loadComments)
+                        }
+                      >
+                        ✕
+                      </button>
+
+                    </div>
+
+                    <div className="comment-text">
+                      {c.comment_text}
+                    </div>
+
+                  </div>
+
+                </div>
+              );
+            })}
+
+            {/* COMMENT INPUT */}
+
+            <div className="comment-input-box">
+
+              <select
+                value={commentUser}
+                onChange={(e) => setCommentUser(e.target.value)}
+              >
+                <option value="">User</option>
+
+                {users.map((user) => (
+                  <option key={user.user_id} value={user.user_id}>
+                    {user.name}
+                  </option>
+                ))}
+
+              </select>
+
+              <input
+                placeholder="Write comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+              />
+
+              <button onClick={addComment}>
+                Post
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
 
     </div>
   );

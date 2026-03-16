@@ -2,7 +2,7 @@ import { BrowserRouter,Routes,Route } from "react-router-dom"
 import Navbar from "./components/Navbar"
 import Dashboard from "./pages/Dashboard"
 import ProjectPage from "./pages/ProjectPage"
-
+import "./styles/global.css"
 function App(){
 
  return(

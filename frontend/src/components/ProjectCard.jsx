@@ -1,21 +1,39 @@
 import { Link } from "react-router-dom";
 
-export default function ProjectCard({project}){
+export default function ProjectCard({ project }) {
 
- return(
+  return (
 
-  <div className="project-card">
+    <div className="project-card">
 
-   <h3>{project.project_name}</h3>
+      <div className="project-card-top">
 
-   <p>{project.domain}</p>
+        <div className="project-icon">
+          {project.project_name.charAt(0).toUpperCase()}
+        </div>
 
-   <Link to={`/project/${project.project_id}`}>
-    Open Project
-   </Link>
+        <div className="project-info">
 
-  </div>
+          <h3 className="project-title">
+            {project.project_name}
+          </h3>
 
- )
+          <span className="project-domain">
+            {project.domain}
+          </span>
 
+        </div>
+
+      </div>
+
+      <Link
+        className="project-open-btn"
+        to={`/project/${project.project_id}`}
+      >
+        Open Project →
+      </Link>
+
+    </div>
+
+  );
 }
