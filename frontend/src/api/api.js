@@ -1,4 +1,4 @@
-const BASE = "http://127.0.0.1:9000";
+const BASE = "https://ai-project-management-latest.onrender.com";
 
 export const getProjects = () =>
  fetch(`${BASE}/projects`).then(res => res.json());
