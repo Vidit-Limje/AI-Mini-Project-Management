@@ -4,6 +4,9 @@ A backend application for managing **projects, tasks, and comments** with **AI-a
 Built using **FastAPI, PostgreSQL (Supabase), SQLAlchemy**, and **OpenRouter AI models**.
 
 ---
+## Backend URL:
+https://ai-project-management-latest.onrender.com
+
 
 # 🚀 Features
 
